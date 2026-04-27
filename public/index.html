@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FlowDesk — Premium Task Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div id="toast" class="toast hidden"></div>
+  <div id="mobileOverlay" class="mobile-overlay hidden"></div>
+
+  <main id="loginView" class="login-shell">
+    <section class="login-card glass-card">
+      <div class="brand-mark">F</div>
+      <p class="eyebrow">Premium Task Management</p>
+      <h1>FlowDesk</h1>
+      <p class="muted">Assign tasks by voice or text. Employees only see their own work.</p>
+
+      <label class="field-label" for="loginEmail">Email / Login ID</label>
+      <input id="loginEmail" class="input-control" type="email" placeholder="bhavya@hca.local" autocomplete="username" />
+
+      <label class="field-label" for="loginPassword">Password</label>
+      <input id="loginPassword" class="input-control" type="password" placeholder="Enter password" autocomplete="current-password" />
+
+      <button id="loginBtn" class="primary-btn full-width">Login</button>
+      <div class="demo-credentials">
+        <button class="demo-chip" type="button" data-email="bhavya@hca.local" data-password="Admin@123">Admin demo</button>
+        <button class="demo-chip" type="button" data-email="rahul@hca.local" data-password="Employee@123">Employee demo</button>
+      </div>
+      <p class="small-note">Employees now login using their own email and password.</p>
+    </section>
+  </main>
+
+  <div id="appView" class="app-shell hidden">
+    <header class="mobile-header glass-card">
+      <button id="menuBtn" class="icon-btn" aria-label="Open menu">☰</button>
+      <div>
+        <strong>FlowDesk</strong>
+        <span id="mobileUserLabel">Task OS</span>
+      </div>
+      <button id="mobileQuickAssignBtn" class="primary-btn mini">Assign</button>
+    </header>
+
+    <aside id="sidebar" class="sidebar glass-card">
+      <div class="sidebar-brand">
+        <div class="brand-mark small">F</div>
+        <div>
+          <strong>FlowDesk</strong>
+          <span>HCA Task OS</span>
+        </div>
+      </div>
+
+      <nav class="nav-list">
+        <button class="nav-item active" data-section="dashboard">Dashboard</button>
+        <button class="nav-item manager-only" data-section="assign">Assign Task</button>
+        <button class="nav-item manager-only" data-section="employees">Employees</button>
+        <button class="nav-item" data-section="tasks">Tasks</button>
+        <button class="nav-item" data-section="notifications">Notifications <span id="navUnread" class="nav-pill hidden">0</span></button>
+        <button class="nav-item" data-section="search">Smart Search</button>
+        <button class="nav-item" data-section="reports">Reports</button>
+      </nav>
+
+      <div class="user-panel">
+        <div id="userAvatar" class="avatar">U</div>
+        <div>
+          <strong id="currentUserName">User</strong>
+          <span id="currentUserRole">Role</span>
+        </div>
+      </div>
+      <button id="logoutBtn" class="ghost-btn full-width">Logout</button>
+    </aside>
+
+    <section class="main-panel">
+      <header class="topbar glass-card">
+        <div>
+          <p class="eyebrow" id="dateLabel">Today</p>
+          <h2 id="pageTitle">Dashboard</h2>
+        </div>
+        <div class="topbar-actions">
+          <button id="refreshBtn" class="ghost-btn">Refresh</button>
+          <button id="quickAssignBtn" class="primary-btn manager-only">Assign Task</button>
+        </div>
+      </header>
+
+      <section id="dashboardSection" class="content-section">
+        <div class="stats-grid">
+          <article class="stat-card glass-card"><span>Total Tasks</span><strong id="statTotal">0</strong><p>All visible tasks</p></article>
+          <article class="stat-card glass-card"><span>In Progress</span><strong id="statProgress">0</strong><p>Active execution</p></article>
+          <article class="stat-card glass-card"><span>Blocked</span><strong id="statBlocked">0</strong><p>Needs attention</p></article>
+          <article class="stat-card glass-card"><span>Overdue</span><strong id="statOverdue">0</strong><p>Past due date</p></article>
+        </div>
+
+        <div class="split-grid">
+          <article class="panel-card glass-card">
+            <div class="section-head">
+              <div><p class="eyebrow">Today</p><h3>Priority Tasks</h3></div>
+              <span class="pill" id="avgProgress">0% avg</span>
+            </div>
+            <div id="priorityTasks" class="task-list compact"></div>
+          </article>
+
+          <article id="workloadCard" class="panel-card glass-card manager-only">
+            <div class="section-head">
+              <div><p class="eyebrow">Admin View</p><h3>Employee Workload</h3></div>
+            </div>
+            <div id="workloadList" class="workload-list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="assignSection" class="content-section hidden">
+        <div class="assign-grid">
+          <article class="panel-card glass-card">
+            <div class="section-head">
+              <div><p class="eyebrow">Text Assignment</p><h3>Create a task</h3></div>
+            </div>
+            <form id="taskForm" class="task-form">
+              <label>Employee<select id="assignedTo" required></select></label>
+              <label>Task title<input id="taskTitle" placeholder="Prepare daily sales report" required /></label>
+              <label>Description<textarea id="taskDescription" rows="5" placeholder="Add clear instruction, expected output, and deadline context."></textarea></label>
+              <div class="form-row">
+                <label>Priority<select id="priority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="urgent">Urgent</option></select></label>
+                <label>Due date & time<input id="dueDate" type="datetime-local" /></label>
+              </div>
+              <button class="primary-btn" type="submit">Confirm Assignment</button>
+            </form>
+          </article>
+
+          <article class="panel-card glass-card voice-panel">
+            <div class="section-head"><div><p class="eyebrow">Voice Assignment</p><h3>Speak a task</h3></div></div>
+            <button id="voiceBtn" class="mic-button" type="button"><span>●</span><strong>Start Voice</strong></button>
+            <p class="muted center-text">Example: “Assign Rahul to prepare the sales report by 5 PM today with high priority.”</p>
+            <div class="transcript-box"><span>Live transcript</span><p id="transcriptText">Voice text will appear here...</p></div>
+            <div class="preview-box"><span>Parsed Preview</span><div id="parsedPreview" class="parsed-preview">No voice input yet.</div></div>
+            <button id="applyParsedBtn" class="ghost-btn full-width" type="button">Apply Preview to Form</button>
+          </article>
+        </div>
+      </section>
+
+      <section id="employeesSection" class="content-section hidden">
+        <div class="employee-grid">
+          <article class="panel-card glass-card">
+            <div class="section-head"><div><p class="eyebrow">Employee Management</p><h3 id="employeeFormTitle">Add new employee</h3></div></div>
+            <form id="employeeForm" class="task-form">
+              <input id="employeeId" type="hidden" />
+              <label>Employee name<input id="employeeName" placeholder="Avinash Kumar Singh" required /></label>
+              <label>Email / Login ID<input id="employeeEmail" type="email" placeholder="avinash@hca.local" required /></label>
+              <label>Password<input id="employeePassword" type="password" placeholder="Minimum 6 characters" autocomplete="new-password" /></label>
+              <p class="small-note" id="employeePasswordNote">Required for new employees. While editing, leave blank to keep existing password.</p>
+              <div class="form-row">
+                <label>Role<select id="employeeRole"><option value="employee" selected>Employee</option><option value="manager">Manager</option><option value="admin">Admin</option><option value="super_admin">Super Admin</option></select></label>
+                <label>Department<input id="employeeDepartment" placeholder="Sales / Accounts / Service" /></label>
+              </div>
+              <label class="check-row"><input id="employeeActive" type="checkbox" checked /><span>Active user can login and receive tasks</span></label>
+              <div class="form-actions"><button class="primary-btn" type="submit">Save Employee</button><button id="clearEmployeeFormBtn" class="ghost-btn" type="button">Clear</button></div>
+            </form>
+          </article>
+
+          <article class="panel-card glass-card">
+            <div class="section-head wrap"><div><p class="eyebrow">Directory</p><h3>Employees & roles</h3></div><button id="refreshEmployeesBtn" class="ghost-btn" type="button">Refresh</button></div>
+            <p class="small-note">Add, edit, activate, or deactivate employees directly from this dashboard.</p>
+            <div id="employeeDirectory" class="employee-list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="tasksSection" class="content-section hidden">
+        <article class="panel-card glass-card">
+          <div class="section-head wrap">
+            <div><p class="eyebrow">Task Board</p><h3 id="taskBoardTitle">Visible Tasks</h3></div>
+            <div class="filters advanced-filters">
+              <select id="statusFilter"><option value="all">All Status</option><option value="assigned">Assigned</option><option value="accepted">Accepted</option><option value="in_progress">In Progress</option><option value="blocked">Blocked</option><option value="under_review">Under Review</option><option value="completed">Completed</option><option value="delayed">Delayed</option></select>
+              <select id="priorityFilter"><option value="all">All Priority</option><option value="urgent">Urgent</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+              <select id="assigneeFilter" class="manager-only"><option value="all">All Employees</option></select>
+              <select id="dueFilter"><option value="all">All Due Dates</option><option value="today">Due Today</option><option value="overdue">Overdue</option><option value="upcoming">Upcoming</option><option value="no_due">No Due Date</option></select>
+              <input id="taskSearch" placeholder="Filter by title or description..." />
+            </div>
+          </div>
+          <div class="board-actions"><button id="resetFiltersBtn" class="ghost-btn" type="button">Reset Filters</button><button id="exportTasksBtn" class="ghost-btn" type="button">Export CSV</button></div>
+          <div id="taskList" class="task-list"></div>
+        </article>
+      </section>
+
+      <section id="notificationsSection" class="content-section hidden">
+        <article class="panel-card glass-card">
+          <div class="section-head wrap"><div><p class="eyebrow">Notifications</p><h3>Task alerts & updates</h3></div><button id="markAllReadBtn" class="ghost-btn" type="button">Mark all read</button></div>
+          <div id="notificationList" class="notification-list"></div>
+        </article>
+      </section>
+
+      <section id="searchSection" class="content-section hidden">
+        <article class="panel-card glass-card">
+          <div class="section-head"><div><p class="eyebrow">Qdrant Search</p><h3>Smart semantic task search</h3></div></div>
+          <div class="search-bar"><input id="smartSearchInput" placeholder="Search by meaning, e.g. payment delay, website sync, service blocker..." /><button id="smartSearchBtn" class="primary-btn">Search</button></div>
+          <p class="small-note">Employees only receive results from their own assigned tasks.</p>
+          <div id="smartResults" class="task-list"></div>
+        </article>
+      </section>
+
+      <section id="reportsSection" class="content-section hidden">
+        <article class="panel-card glass-card">
+          <div class="section-head wrap"><div><p class="eyebrow">Reports</p><h3>Execution summary</h3></div><button id="refreshReportsBtn" class="ghost-btn" type="button">Refresh Report</button></div>
+          <div id="reportGrid" class="report-grid"></div>
+        </article>
+      </section>
+    </section>
+  </div>
+
+  <dialog id="taskDialog" class="task-dialog">
+    <div class="dialog-head">
+      <div><p class="eyebrow">Task Details</p><h3 id="dialogTitle">Task</h3></div>
+      <button id="closeDialogBtn" class="icon-btn">×</button>
+    </div>
+    <div id="dialogBody"></div>
+  </dialog>
+
+  <script src="/app.js"></script>
+</body>
+</html>

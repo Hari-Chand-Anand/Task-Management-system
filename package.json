@@ -1,0 +1,32 @@
+{
+  "name": "flowdesk-task-manager",
+  "version": "1.0.0",
+  "description": "Vercel-ready premium task management web app with email/password login, PostgreSQL, and Qdrant semantic search.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down",
+    "vercel:dev": "vercel dev"
+  },
+  "keywords": [
+    "task-management",
+    "qdrant",
+    "postgresql",
+    "voice-assignment",
+    "express"
+  ],
+  "author": "HCA",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.x"
+  }
+}
